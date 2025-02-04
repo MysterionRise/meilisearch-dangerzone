@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MeiliSearch PoC Comparison</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .container { display: flex; flex-wrap: wrap; }
+    .column {
+      flex: 1;
+      margin: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      min-width: 300px;
+      max-width: 48%;
+    }
+    .result-item {
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+    }
+    .result-item:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+  <h1>Search Comparison: v1 vs v2</h1>
+  <div>
+    <input type="text" id="search-input" placeholder="Enter search query" style="width: 70%; padding: 8px;">
+    <button id="search-btn" style="padding: 8px;">Search</button>
+  </div>
+  <br>
+  <div>
+    <label for="facet-input">Facet Filters (comma separated, e.g. <code>state:California</code>):</label>
+    <input type="text" id="facet-input" placeholder="state:California" style="width: 70%; padding: 6px;">
+  </div>
+  <br>
+  <div class="container">
+    <div class="column" id="results-v1">
+      <h2>Search v1 Results</h2>
+      <div id="v1-content">Results will appear here...</div>
+    </div>
+    <div class="column" id="results-v2">
+      <h2>Search v2 Results</h2>
+      <div id="v2-content">Results will appear here...</div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('search-btn').addEventListener('click', function() {
+      var query = document.getElementById('search-input').value;
+      var facets = document.getElementById('facet-input').value;
+
+      // Build query URLs for both endpoints
+      var url_v1 = `/search_v1?q=${encodeURIComponent(query)}&facets=${encodeURIComponent(facets)}`;
+      var url_v2 = `/search_v2?q=${encodeURIComponent(query)}&facets=${encodeURIComponent(facets)}`;
+
+      // Fetch v1 results
+      fetch(url_v1)
+        .then(response => response.json())
+        .then(data => {
+          displayResults(data, 'v1-content');
+        })
+        .catch(error => {
+          document.getElementById('v1-content').innerHTML = 'Error fetching v1 results';
+          console.error('Error:', error);
+        });
+
+      // Fetch v2 results
+      fetch(url_v2)
+        .then(response => response.json())
+        .then(data => {
+          displayResults(data, 'v2-content');
+        })
+        .catch(error => {
+          document.getElementById('v2-content').innerHTML = 'Error fetching v2 results';
+          console.error('Error:', error);
+        });
+    });
+
+    function displayResults(data, elementId) {
+      var container = document.getElementById(elementId);
+      container.innerHTML = "";
+      if (data.hits && data.hits.length > 0) {
+        data.hits.forEach(hit => {
+          var div = document.createElement('div');
+          div.className = "result-item";
+          div.innerHTML = `<strong>${hit.title || "No Title"}</strong><br>
+                           ${hit.excerpt ? hit.excerpt : ""}<br>
+                           <em>Published on: ${hit.published_on || "N/A"}</em>`;
+          container.appendChild(div);
+        });
+      } else {
+        container.innerHTML = "No results found.";
+      }
+    }
+  </script>
+</body>
+</html>
