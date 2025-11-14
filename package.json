@@ -1,0 +1,26 @@
+{
+  "name": "meilisearch-hybrid-search-demo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Client-ready Hybrid Search demo for Meilisearch with vector embeddings",
+  "scripts": {
+    "dev": "pnpm --filter @app/web dev",
+    "build": "pnpm --filter @app/web build",
+    "bootstrap": "tsx scripts/bootstrap.ts",
+    "seed": "tsx scripts/seed-products.ts && tsx scripts/seed-articles.ts",
+    "check:tasks": "tsx scripts/check-tasks.ts",
+    "type-check": "pnpm --filter @app/web type-check"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.4.0",
+    "@types/node": "^22.10.2",
+    "dotenv": "^16.4.7",
+    "meilisearch": "^0.44.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
