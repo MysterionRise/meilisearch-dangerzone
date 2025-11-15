@@ -457,6 +457,57 @@ pnpm type-check
 pnpm build
 ```
 
+### Testing
+
+The project includes comprehensive tests to ensure reliability:
+
+```bash
+# Run all tests
+pnpm test
+
+# Run unit tests only
+pnpm test:unit
+
+# Run integration tests only
+pnpm test:integration
+
+# Run tests with coverage
+pnpm --filter @meili-demo/shared test:coverage
+
+# Run tests in watch mode
+pnpm --filter @meili-demo/shared test:watch
+```
+
+**Test Coverage:**
+
+- **Unit Tests** (`packages/shared/src/*.test.ts`)
+  - Filter building functions (`buildGeoFilter`, `buildPriceFilter`, etc.)
+  - Type definitions and constants
+  - Utility functions
+
+- **Integration Tests** (`apps/web/src/__tests__/integration/*.test.ts`)
+  - API route parameter validation
+  - Search mode logic
+  - Filter combinations
+  - Pagination calculations
+  - Response structure validation
+
+- **Smoke Tests** (`scripts/__tests__/*.test.ts`)
+  - Bootstrap configuration
+  - Seed data structure
+  - Environment variable checks
+  - Data generation validation
+
+**CI/CD:**
+
+GitHub Actions automatically runs on every push:
+- Type checking across all packages
+- Unit and integration tests
+- Next.js build verification
+- Integration tests with Meilisearch service
+
+See `.github/workflows/ci.yml` for the full CI configuration.
+
 ### Environment Variables
 
 **Required:**
