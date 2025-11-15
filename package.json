@@ -18,7 +18,7 @@
   },
   "engines": {
     "node": ">=20.0.0",
-    "pnpm": ">=8.0.0"
+    "pnpm": ">=10.0.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.4.0",
