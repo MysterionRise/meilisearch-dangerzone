@@ -109,11 +109,11 @@ export interface FacetStats {
   };
 }
 
-export interface SearchHit<T = Product | Article> extends Partial<T> {
+export type SearchHit<T = Product | Article> = Partial<T> & {
   _rankingScore?: number;
   _formatted?: Partial<T>;
   _matchesPosition?: any;
-}
+};
 
 export interface SearchResponse<T = Product | Article> {
   hits: SearchHit<T>[];
