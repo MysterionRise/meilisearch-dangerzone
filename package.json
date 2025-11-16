@@ -7,6 +7,7 @@
     "dev": "pnpm --filter @app/web dev",
     "build": "pnpm --filter @app/web build",
     "bootstrap": "tsx scripts/bootstrap.ts",
+    "bootstrap:clean": "tsx scripts/bootstrap.ts --clean",
     "seed": "tsx scripts/seed-products.ts && tsx scripts/seed-articles.ts",
     "check:tasks": "tsx scripts/check-tasks.ts",
     "type-check": "pnpm --filter @app/web type-check",

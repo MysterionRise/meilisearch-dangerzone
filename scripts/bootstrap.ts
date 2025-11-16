@@ -7,7 +7,12 @@ const MEILI_MASTER_KEY = process.env.MEILI_MASTER_KEY || 'dev-master-key';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 async function bootstrap() {
+  const cleanMode = process.argv.includes('--clean');
+
   console.log('🚀 Bootstrapping Meilisearch indexes...\n');
+  if (cleanMode) {
+    console.log('🧹 Clean mode enabled - existing indices will be deleted\n');
+  }
 
   const client = createMeiliClient(MEILI_HOST, MEILI_MASTER_KEY);
 
@@ -25,6 +30,41 @@ async function bootstrap() {
     console.warn('⚠️  OPENAI_API_KEY not set. Embedders will not be configured.');
     console.warn('   Vector search will not work without embedders.');
     console.warn('   Set OPENAI_API_KEY in your environment to enable hybrid search.\n');
+  }
+
+  // Delete existing indexes if in clean mode
+  if (cleanMode) {
+    console.log('🗑️  Deleting existing indexes...');
+    const deleteTasks: number[] = [];
+
+    try {
+      const productsDeleteTask = await client.deleteIndex('products');
+      deleteTasks.push(productsDeleteTask.taskUid);
+      console.log('  - products index deleted (task:', productsDeleteTask.taskUid, ')');
+    } catch (error: any) {
+      if (error.code === 'index_not_found') {
+        console.log('  - products index does not exist (skipping)');
+      } else {
+        throw error;
+      }
+    }
+
+    try {
+      const articlesDeleteTask = await client.deleteIndex('articles');
+      deleteTasks.push(articlesDeleteTask.taskUid);
+      console.log('  - articles index deleted (task:', articlesDeleteTask.taskUid, ')');
+    } catch (error: any) {
+      if (error.code === 'index_not_found') {
+        console.log('  - articles index does not exist (skipping)');
+      } else {
+        throw error;
+      }
+    }
+
+    if (deleteTasks.length > 0) {
+      await waitForTasks(client, deleteTasks);
+      console.log('✅ Deletion complete\n');
+    }
   }
 
   // Create indexes
