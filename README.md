@@ -65,26 +65,37 @@ pnpm install
 
 ### 3. Configure Environment
 
-Create `.env.local` in `apps/web/`:
+You need to configure environment variables in **two locations**:
+
+**A. Root `.env` (for bootstrap/seed scripts):**
+
+```bash
+cp .env.example .env
+```
+
+**B. `apps/web/.env.local` (for Next.js app):**
 
 ```bash
 cp apps/web/.env.local.example apps/web/.env.local
 ```
 
-Edit `apps/web/.env.local` and add your OpenAI API key:
+Edit **both files** and add your OpenAI API key:
 
 ```env
 MEILI_HOST=http://localhost:7700
 MEILI_MASTER_KEY=dev-master-key
-OPENAI_API_KEY=sk-your-openai-api-key-here
+OPENAI_API_KEY=sk-your-openai-api-key-here  # Replace with your actual key
 ```
+
+> **Note**: The OPENAI_API_KEY is optional. Without it, only text search will work (vector/hybrid search will be disabled).
 
 ### 4. Bootstrap Indexes
 
 Configure Meilisearch indexes, embedders, settings, synonyms, and typo tolerance:
 
 ```bash
-pnpm bootstrap
+pnpm bootstrap        # Safe mode: preserves existing data
+pnpm bootstrap:clean  # Clean mode: deletes existing indices first
 ```
 
 This will:
@@ -94,6 +105,8 @@ This will:
 - Configure faceting and pagination
 - Add synonyms (e.g., "cellphone" ↔ "smartphone")
 - Configure typo tolerance
+
+> **Note**: Use `bootstrap:clean` to completely reset indices during development. The default `bootstrap` command is safe and preserves existing data.
 
 ### 5. Seed Data
 
